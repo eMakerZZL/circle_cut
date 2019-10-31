@@ -98,13 +98,26 @@ arc_guide_line_circle_center_x = laser_pos_x + laser_circle_raduis - arc_guide_l
 arc_guide_line_circle_center_y = laser_pos_y;
 arc_guide_line_circle_center_z = laser_pos_z;
 %judge guide line in/out circle
-arc_guide_line_in_circle = true;
+is_arc_guide_line_out_circle = true;
 %add arc in guide line 
 arc_guide_line_in_theta = arc_guide_line_radians_length : -pi / 180 : 0;
 [arc_guide_line_in_col, arc_guide_line_in_row] = size(arc_guide_line_in_theta);
 arc_trail_in_x = arc_guide_line_circle_center_x + arc_guide_line_radius * cos(arc_guide_line_in_theta);
 arc_trail_in_y = arc_guide_line_circle_center_y + arc_guide_line_radius * sin(arc_guide_line_in_theta);
 arc_trail_in_z = arc_guide_line_circle_center_z * ones(1, arc_guide_line_in_row);
+if (is_arc_guide_line_out_circle)
+    parallel_trail_in_x = arc_trail_in_x - arc_guide_line_circle_center_x;
+    parallel_trail_in_y = arc_trail_in_y - arc_guide_line_circle_center_y;
+    parallel_trail_in_z = arc_trail_in_z - arc_guide_line_circle_center_z;
+
+    rotate_y_trail_in_x = parallel_trail_in_x * cos(pi) - parallel_trail_in_z * sin(pi);
+    rotate_y_trail_in_y = parallel_trail_in_y;
+    rotate_y_trail_in_z = parallel_trail_in_x * sin(pi) + parallel_trail_in_z * cos(pi);
+
+    arc_trail_in_x = rotate_y_trail_in_x + arc_guide_line_circle_center_x + 2 * arc_guide_line_radius;
+    arc_trail_in_y = rotate_y_trail_in_y + arc_guide_line_circle_center_y;
+    arc_trail_in_z = rotate_y_trail_in_z + arc_guide_line_circle_center_z;
+end
 plot3(arc_trail_in_x, arc_trail_in_y, arc_trail_in_z, 'co');
 %add arc out guide line
 arc_guide_line_out_theta = 2 * pi - arc_guide_line_radians_length : pi / 180 : 2 * pi;
@@ -112,6 +125,19 @@ arc_guide_line_out_theta = 2 * pi - arc_guide_line_radians_length : pi / 180 : 2
 arc_trail_out_x = arc_guide_line_circle_center_x + arc_guide_line_radius * cos(arc_guide_line_out_theta);
 arc_trail_out_y = arc_guide_line_circle_center_y + arc_guide_line_radius * sin(arc_guide_line_out_theta);
 arc_trail_out_z = arc_guide_line_circle_center_z * ones(1, arc_guide_line_out_row);
+if (is_arc_guide_line_out_circle)
+    parallel_trail_out_x = arc_trail_out_x - arc_guide_line_circle_center_x;
+    parallel_trail_out_y = arc_trail_out_y - arc_guide_line_circle_center_y;
+    parallel_trail_out_z = arc_trail_out_z - arc_guide_line_circle_center_z;
+
+    rotate_y_trail_out_x = parallel_trail_out_x * cos(pi) - parallel_trail_out_z * sin(pi);
+    rotate_y_trail_out_y = parallel_trail_out_y;
+    rotate_y_trail_out_z = parallel_trail_out_x * sin(pi) + parallel_trail_out_z * cos(pi);
+
+    arc_trail_out_x = rotate_y_trail_out_x + arc_guide_line_circle_center_x + 2 * arc_guide_line_radius;
+    arc_trail_out_y = rotate_y_trail_out_y + arc_guide_line_circle_center_y;
+    arc_trail_out_z = rotate_y_trail_out_z + arc_guide_line_circle_center_z;
+end
 plot3(arc_trail_out_x, arc_trail_out_y, arc_trail_out_z, 'mo');
 % draw arc in guide line trail
 cut_arc_guide_line_in_x = arc_trail_in_x;
