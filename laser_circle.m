@@ -98,7 +98,7 @@ arc_guide_line_circle_center_x = laser_pos_x + laser_circle_raduis - arc_guide_l
 arc_guide_line_circle_center_y = laser_pos_y;
 arc_guide_line_circle_center_z = laser_pos_z;
 %judge guide line in/out circle
-is_arc_guide_line_out_circle = true;
+is_arc_guide_line_out_circle = false;
 %add arc in guide line 
 arc_guide_line_in_theta = arc_guide_line_radians_length : -pi / 180 : 0;
 [arc_guide_line_in_col, arc_guide_line_in_row] = size(arc_guide_line_in_theta);
@@ -149,4 +149,32 @@ cut_arc_guide_line_out_x = arc_trail_out_x;
 cut_arc_guide_line_out_y = arc_trail_out_y;
 cut_arc_guide_line_out_z = sqrt(pipe_raidus^2 - cut_arc_guide_line_out_y.^2);
 plot3(cut_arc_guide_line_out_x, cut_arc_guide_line_out_y, cut_arc_guide_line_out_z, 'r*');
+
+[frame_col_count, frame_row_count] = size(arc_guide_line_in_theta);
+move_laser_x = 0;
+move_laser_y = 0;
+move_laser_z = laser_pos_z;
+hlaser = plot3(move_laser_x, move_laser_y, move_laser_z, 'ro');
+for i = 1 : frame_row_count
+    move_laser_x = arc_trail_in_x(1,i);
+    set(hlaser, 'xdata', move_laser_x, 'ydata', move_laser_y, 'zdata', move_laser_z);
+    drawnow;
+    pause(0.01);
+end
+
+[frame_col_count, frame_row_count] = size(theta);
+for i = 1 : frame_row_count
+    move_laser_x = cut_trail_x(1,i);
+    set(hlaser, 'xdata', move_laser_x, 'ydata', move_laser_y, 'zdata', move_laser_z);
+    drawnow;
+    pause(0.01);
+end
+
+[frame_col_count, frame_row_count] = size(arc_guide_line_out_theta);
+for i = frame_row_count : -1 : 1
+    move_laser_x = arc_trail_out_x(1,i);
+    set(hlaser, 'xdata', move_laser_x, 'ydata', move_laser_y, 'zdata', move_laser_z);
+    drawnow;
+    pause(0.01);
+end
 
